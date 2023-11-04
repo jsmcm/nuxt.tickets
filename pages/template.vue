@@ -1,0 +1,9 @@
+<template>
+
+  <LayoutSiteMain>
+     
+  </LayoutSiteMain>
+   
+
+</template>
+
