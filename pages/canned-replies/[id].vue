@@ -20,7 +20,7 @@
 
       useHead(() => {
           return {
-              title: "SmartSupport.ai | Department",
+              title: "SmartSupport.ai | Canned Reply",
           }
       }); 
 
@@ -65,7 +65,7 @@ let user = reactive({});
 
 let submitDisabled = ref(false);
 
-let getDepartment = (id) => {
+let getCannedReply = (id) => {
   
   // This is a new ticket
   if (id == 0) {
@@ -73,7 +73,7 @@ let getDepartment = (id) => {
   }
 
   axios
-    .get(config.apiUrl + "/api/departments/" + id,
+    .get(config.apiUrl + "/api/canned-replies/" + id,
     {
       headers: {
         Authorization: "Bearer " + auth.access_token
@@ -116,14 +116,14 @@ let getDepartment = (id) => {
 };
   
 
-let createDepartment = async () => {
+let createCannedReply = async () => {
 
   try {
 
       var myEditor = document.querySelector('.js-quill')
       var html = myEditor.children[0].innerHTML
 
-      const response = await axios.post(config.apiUrl + "/api/departments", {
+      const response = await axios.post(config.apiUrl + "/api/canned-replies", {
         message : html,
         title   : title.value, 
         department: department.value,
@@ -161,7 +161,7 @@ let errors = () => {
 
   formErrors.value = "";
 
-  // new department
+  // new canned reply
   if (title.value == "") {
     titleError.value = true;
     formErrors.value += "<li>Title cannot be blank</li>";
@@ -200,20 +200,20 @@ let save = () => {
 
   if (id == 0) {
 
-    // New Department
-    createDepartment()
+    // New CannedReply
+    createCannedReply()
     .then((response) => {
       console.log("Response: ");
       console.log(response);
       if (response) {
         sweetalert({
           text:  "Saved",
-          title: "Department saved",
+          title: "Canned reply saved",
           icon: "success",
           timer: 1500
         });
 
-        router.push("/departments");
+        router.push("/canned-replies");
       }
     })
     .catch((error) => {
@@ -223,7 +223,7 @@ let save = () => {
 
 
   } else {
-    saveDepartment(id);
+    saveCannedReply(id);
   }
 
 };
@@ -236,15 +236,15 @@ let save = () => {
 
 
 
-let saveDepartment = (departmentId) => {
+let saveCannedReply = (cannedReplyId) => {
   
   var myEditor = document.querySelector('.js-quill')
   var html = myEditor.children[0].innerHTML
 
-  if (useUpdateDepartment(departmentId, html, title.value, useMl.value, auth.access_token, config.apiUrl)) {
+  if (useUpdateCannedReply(cannedReplyId, html, title.value, useMl.value, auth.access_token, config.apiUrl)) {
     sweetalert({
       text:  "Saved",
-      title: "Department updated",
+      title: "Canned reply updated",
       icon: "success",
       timer: 1500
     });
@@ -259,7 +259,7 @@ let saveDepartment = (departmentId) => {
 
 onMounted(() => {
 
-  getDepartment(id);
+  getCannedReply(id);
 })
 
 
@@ -337,7 +337,7 @@ let deleteReply = () => {
 
 
   sweetalert({
-      text: "Really delete this department?",
+      text: "Really delete this canned reply?",
       title: "Are you sure?",
       icon: "warning",      
       buttons: ["No, keep it!", "Yes, I am sure!"],
@@ -345,12 +345,12 @@ let deleteReply = () => {
   }).then(function (isConfirm) {
       if (isConfirm) {
     
-        if (useDeleteDepartment(id, auth.access_token, config.apiUrl)) {
+        if (useDeleteCannedReply(id, auth.access_token, config.apiUrl)) {
 
-          router.push("/departments");
+          router.push("/canned-replies");
 
           sweetalert({
-            text:  "Department Deleted",
+            text:  "Canned Reply Deleted",
             title: "Deleted",
             icon: "success",
             timer: 1500
@@ -360,7 +360,7 @@ let deleteReply = () => {
       } else {
       
           sweetalert({
-              text: "Not deleting department...",
+              text: "Not deleting canned reply...",
               title: "Not deleting",
               icon: "success",  
               timer: 3500
@@ -391,7 +391,7 @@ let deleteReply = () => {
 
           <div class="col-sm mb-2 mb-sm-0">
 
-            <h1 class="page-header-title">New Department</h1>
+            <h1 class="page-header-title">New Canned Reply</h1>
 
             <div class="mt-5">
               <h7 class="text-muted">Title</h7>
@@ -403,7 +403,7 @@ let deleteReply = () => {
                 }"
                 v-model="title"
                 @keydown="titleError = false"
-                placeholder="Department"
+                placeholder="Canned Reply"
               >
             </div>
 
@@ -484,7 +484,7 @@ let deleteReply = () => {
                 class="btn btn-danger"
                 @click="deleteReply"
               >
-                <i class="bi-x-lg me-1"></i> Delete Department
+                <i class="bi-x-lg me-1"></i> Delete Canned Reply
               </button>
             
               <button 
@@ -502,7 +502,7 @@ let deleteReply = () => {
                   role="status"
                   aria-hidden="true"
                 ></span>
-                {{ !submitDisabled?"Save Department":"uploading..."}}
+                {{ !submitDisabled?"Save Canned Reply":"uploading..."}}
               </button>
 
             </div>

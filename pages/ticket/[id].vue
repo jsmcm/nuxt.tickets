@@ -354,7 +354,7 @@ let doDeleteTicket = () => {
 
 //console.log("closeTicket " + id);
 axios
-.delete(config.apiUrl + "/api/ticket/" + id,
+.delete(config.apiUrl + "/api/tickets/" + id,
 {
   headers: {
     Authorization: "Bearer " + auth.access_token,
@@ -443,7 +443,7 @@ let closeTicket = () => {
   //console.log("closeTicket " + id);
 
 axios
-  .patch(config.apiUrl + "/api/ticket/" + id,
+  .patch(config.apiUrl + "/api/tickets/" + id,
   {
     status: 'closed'
   },
@@ -510,6 +510,12 @@ let close = () => {
 
 
 
+let saveAndClose = () => {
+
+  save();
+  close();
+
+};
 
 let save = () => {
 
@@ -593,7 +599,7 @@ axios
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
 
-    // we need a data which doesn't come through with the correct label..
+    // we need a date which doesn't come through with the correct label..
     response.data.thread.date = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     threads.value.push(response.data.thread);
 
@@ -763,7 +769,7 @@ function generateRandomString(length) {
         <div class="row align-items-end">
           <div class="col-sm mb-2 mb-sm-0" v-if="id>0">
 
-            <h7 class="text-muted">Ticket #{{ id }} - {{ status }}</h7>
+            <h7 class="text-muted">Ticket #{{ id }} - {{ status }}; {{ department.department }}</h7>
             <h1 class="page-header-title">{{ subject }}</h1>
             <h4 class="text-muted">{{ user.email }}</h4>
 			
@@ -994,11 +1000,10 @@ function generateRandomString(length) {
 
 
 
-            <div
-              class="mb-3 mb-lg-5 d-flex justify-content-end align-items-center gap-3"
-            >
-                            
-              <button 
+          <div
+              class="mb-1 mb-lg-1 d-flex justify-content-end align-items-center gap-3"
+            >               
+            <button 
                 @click="save"
                 :disabled="submitDisabled"
                 type="button"
@@ -1016,6 +1021,33 @@ function generateRandomString(length) {
                 {{ !submitDisabled?"Send Message":"uploading..."}}
               </button>
 
+          
+            </div>
+
+
+            <div
+              class="mb-3 mb-lg-5 d-flex justify-content-end align-items-center gap-3"
+            >               
+
+
+              <button 
+                @click="saveAndClose"
+                :disabled="submitDisabled"
+                type="button"
+                class="btn btn-success btn-lg"
+                :class="{
+                  displayed: !submitDisabled
+                }"
+              >
+                <span 
+                  v-if="submitDisabled"
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                {{ !submitDisabled?"Send Message and Close Ticket":"uploading..."}}
+              </button>
+          
             </div>
 
 

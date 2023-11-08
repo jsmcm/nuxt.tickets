@@ -68,6 +68,7 @@ onMounted(() => {
                         <th>Subject</th>
                         <th>Opened</th>
                         <th>Last Message</th>
+                        <th>From</th>
                         <th>Intent</th>
                         <th>Department</th>
                         <th>Attachments</th>
