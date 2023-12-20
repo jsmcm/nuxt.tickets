@@ -365,6 +365,8 @@ axios
   // console.log("response: ");
   // console.log(response);
     if (response.status == 200 && response.data.status == "success") {
+
+      router.push("/");
       return true;
     }
   
@@ -398,7 +400,6 @@ sweetalert({
   if (isConfirm) {
    
     doDeleteTicket();
-    router.push("/");
 
   } else {
    
@@ -457,8 +458,10 @@ axios
     // console.log("response: ");
     // console.log(response);
       if (response.status == 200 && response.data.status == "success") {
+        router.push("/");
         return true;
       }
+      router.push("/");
     
   })
   .catch((error) => {
@@ -490,7 +493,7 @@ let close = () => {
     if (isConfirm) {
      
       closeTicket();
-      router.push("/");
+
 
     } else {
      
@@ -887,7 +890,7 @@ function generateRandomString(length) {
       <!-- End Page Header -->
 
 
-      <TicketMessages v-if="id>0" :threads="threads"/>
+      <TicketMessages v-if="id>0" :threads="threads" :ticket="ticket" />
 
       <div class="row">
         <div class="col-lg-12 mb-3 mb-lg-0">

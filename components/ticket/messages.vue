@@ -1,7 +1,8 @@
 <script setup>
 
 let props = defineProps({
-    threads: Object
+    threads: Object,
+    ticket: Object
 });
 
 </script>
@@ -16,6 +17,7 @@ let props = defineProps({
                     v-for="thread in threads"
                     :key="thread.id"
                     :thread="thread"
+                    :ticket="ticket"
                     :id="thread.id"
                     style="scroll-margin-top:200px;"
                 ></TicketMessage>    

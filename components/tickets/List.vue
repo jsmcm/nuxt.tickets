@@ -66,18 +66,17 @@ onMounted(() => {
                     <tr>
                         <th>Client</th>
                         <th>Subject</th>
+                        <th>Department</th>
                         <th>Opened</th>
                         <th>Last Message</th>
                         <th>From</th>
                         <th>Intent</th>
-                        <th>Department</th>
                         <th>Attachments</th>
                         <th>Status</th>
                     </tr>
                 </thead>
 
                 <tbody>
-            
                     <TicketsMessage 
                         v-for="ticket in tickets" 
                         :ticket="ticket" 

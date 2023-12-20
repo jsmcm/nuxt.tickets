@@ -23,14 +23,14 @@ let formattedDirection = computed(() => {
 </script>
 <template>
 
-    <tr>
+    <tr v-if="ticket.thread.length>0">
         <td>{{ ticket.user.email }}</td>
         <td><NuxtLink :to="'/ticket/' + ticket.id">{{ ticket.subject?ticket.subject:" [Blank]" }}</NuxtLink></td>
+        <td>{{ ticket.department.department }}</td>
         <td>{{ ticket.date_opened }}</td>
         <td>{{ ticket.thread[ ticket.thread.length - 1].date }}</td>
         <td>{{ formattedDirection }}</td>
         <td>{{ ticket.intent }}</td>
-        <td>{{ ticket.department.department }}</td>
         <td>{{ ticket.attachement_count }}</td>
         <td>{{ ticket.status }}</td>
     </tr>
