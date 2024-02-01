@@ -760,6 +760,21 @@ function generateRandomString(length) {
   });
 
 
+  let sortedCannedReplies = computed(() => {
+
+    return canned_replies.value.sort((a, b) => {
+      if (a.title < b.title) {
+        return -1;
+      }
+      if (a.title > b.title) {
+        return 1;
+      }
+      return 0;
+    });
+
+
+  });
+
 </script>
 
 <template>
@@ -911,7 +926,7 @@ function generateRandomString(length) {
                   v-model="cannedReply"
                 >
                   <option value="" :key="-1">Canned Reply</option>
-                  <option v-for="canned_reply in canned_replies" :key="canned_reply.id" :value="canned_reply.slug">{{ canned_reply.title }}</option>
+                  <option v-for="canned_reply in sortedCannedReplies" :key="canned_reply.id" :value="canned_reply.slug">{{ canned_reply.title }}</option>
                 </select>
               </div>
 
