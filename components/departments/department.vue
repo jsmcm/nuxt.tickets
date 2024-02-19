@@ -48,7 +48,7 @@
 <template>
 
     <tr>
-        <td class="list-group-item form-check-select">
+        <td class="list-group-item">
            {{ department.user_id }}
         </td>
         <td>

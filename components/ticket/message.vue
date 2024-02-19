@@ -38,9 +38,9 @@ let sendAttachments = () => {
         attachments.push(props.thread.attachement[x].file_url);
     }
 
-    let url = props.ticket.department.api_base_url + "tickets/attachments";
-    let token = props.ticket.department.api_token;
-    let email = props.ticket.user.email;
+    let url     = props.ticket.department.api_base_url + "tickets/attachments";
+    let token   = props.ticket.department.api_token;
+    let email   = props.ticket.user.email;
     let subject = props.ticket.subject;
 
 

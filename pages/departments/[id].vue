@@ -48,16 +48,53 @@ if (me.getUserLevel() < 50) {
 }
 
 
-let title = ref("");
-let titleError = ref(false);
+let departmentEmail = ref("");
+let departmentEmailError = ref(false);
 
 let department = ref("");
 let departmentError = ref(false);
 
-let message = ref("");
-let messageError = ref(false);
 
-let useMl = ref(false);
+let signature = ref("");
+let signatureError = ref(false);
+
+
+let logoUrl = ref("");
+let logoUrlError = ref(false);
+
+
+let mailHost = ref("");
+let mailHostError = ref(false);
+
+let mailUsername = ref("");
+let mailUsernameError = ref(false);
+
+
+let mailPassword = ref("");
+let mailPasswordError = ref(false);
+
+
+let popPort = ref(143);
+let popPortError = ref(false);
+
+
+let smtpPort = ref(587);
+let smtpPortError = ref(false);
+
+
+let apiBaseUrl = ref("");
+let apiBaseUrlError = ref(false);
+
+
+let apiToken = ref("");
+let apiTokenError = ref(false);
+
+
+let userId = ref("");
+let userIdError = ref(false);
+
+
+// let useMl = ref(false);
 
 
 let status = ref("");
@@ -81,17 +118,28 @@ let getDepartment = (id) => {
     })
     .then((response) => {
 
-      console.log("response:");
+      console.log("department:");
       console.log(response);
 
-      title.value = response.data.data.title;
-      message.value = response.data.data.message;
+      if (response.status == 200) {
+        department.value        = response.data.department.department;
+        signature.value         = response.data.department.signature;
+        departmentEmail.value   = response.data.department.email_address;
+        logoUrl.value           = response.data.department.logo_url;
+        mailHost.value          = response.data.department.mail_host;
+        mailUsername.value      = response.data.department.mail_username;
+        mailPassword.value      = response.data.department.mail_password;
+        popPort.value           = response.data.department.pop_port;
+        smtpPort.value          = response.data.department.smtp_port;
+        apiBaseUrl.value        = response.data.department.api_base_url;
+        apiToken.value          = response.data.department.api_token;
+        signature.value         = response.data.department.signature;
+        userId.value            = response.data.department.user_id;
 
-      useMl.value = !!response.data.data.use_ml;
-      department.value = response.data.data.department_id;
+        var myEditor = document.querySelector('.js-quill')
+        myEditor.children[0].innerHTML = signature.value;
 
-      var myEditor = document.querySelector('.js-quill')
-      myEditor.children[0].innerHTML = message.value;
+      }
 
     })
     .catch((error) => {
@@ -124,10 +172,10 @@ let createDepartment = async () => {
       var html = myEditor.children[0].innerHTML
 
       const response = await axios.post(config.apiUrl + "/api/departments", {
-        message : html,
-        title   : title.value, 
-        department: department.value,
-        use_ml  : useMl.value,
+        // message : html,
+        // title   : title.value, 
+        // department: department.value,
+        // use_ml  : useMl.value,
       }, {
         headers: {
           Authorization: "Bearer " + auth.access_token
@@ -161,11 +209,6 @@ let errors = () => {
 
   formErrors.value = "";
 
-  // new department
-  if (title.value == "") {
-    titleError.value = true;
-    formErrors.value += "<li>Title cannot be blank</li>";
-  }
 
   
   if (department.value == "") {
@@ -180,7 +223,7 @@ let errors = () => {
 
   if (html == "" || html == "<p></p>" || html == "<p><br></p>") {
     messageError.value = true;
-    formErrors.value += "<li>Message cannot be blank</li>";
+    formErrors.value += "<li>Signature cannot be blank</li>";
   }
 
   if (formErrors.value != "") {
@@ -239,15 +282,36 @@ let save = () => {
 let saveDepartment = (departmentId) => {
   
   var myEditor = document.querySelector('.js-quill')
-  var html = myEditor.children[0].innerHTML
+  signature.value = myEditor.children[0].innerHTML
 
-  if (useUpdateDepartment(departmentId, html, title.value, useMl.value, auth.access_token, config.apiUrl)) {
+
+
+
+
+  if (useUpdateDepartment(
+    departmentId,
+    departmentEmail.value,
+    department.value,
+    signature.value,
+    logoUrl.value,
+    mailHost.value,
+    mailUsername.value,
+    mailPassword.value,
+    popPort.value,
+    smtpPort.value,
+    apiBaseUrl.value,
+    apiToken.value,
+    auth.access_token,
+    config.apiUrl
+  )) {
     sweetalert({
       text:  "Saved",
       title: "Department updated",
       icon: "success",
       timer: 1500
     });
+
+    router.push("/departments");
   }
 
 };
@@ -305,35 +369,11 @@ onMounted(() => {
 
 
   
-  function departmentUserName(department)
-  {
 
-    if (department.user) {
-      return department.user.name + " - ";
-    } else {
-      return "";
-    }
-
-  }
-
-
-  let newThreadTitle = computed(() => {
-  
-    if (id == 0) {
-      return "Message"
-    }
-    
-    if (replyType.value == "to-client" || replyType.value == "from-client") {
-      return "Reply";
-    }
-    
-    return "Internal Note";
-
-  });
 
 
   
-let deleteReply = () => {
+let deleteDepartment = () => {
 
 
   sweetalert({
@@ -394,53 +434,167 @@ let deleteReply = () => {
             <h1 class="page-header-title">New Department</h1>
 
             <div class="mt-5">
-              <h7 class="text-muted">Title</h7>
+              <h7 class="text-muted">Department</h7>
               <input
                 type="text" 
                 class="form-control" 
                 :class="{
-                'error-border': titleError
+                'error-border': departmentError
                 }"
-                v-model="title"
-                @keydown="titleError = false"
+                v-model="department"
+                @keydown="departmentError = false"
                 placeholder="Department"
               >
             </div>
 
 
             <div class="mt-5">
+              <h7 class="text-muted">Email</h7>
+              <input
+                type="text" 
+                class="form-control" 
+                :class="{
+                'error-border': departmentEmailError
+                }"
+                v-model="departmentEmail"
+                @keydown="departmentEmailError = false"
+                placeholder="departmentEmail"
+              >
+            </div>
 
-              <div class="form-check form-switch mb-4">
-                <input
-                  v-model="useMl"
-                  type="checkbox"
-                  class="form-check-input"
-                >
-                <label class="form-check-label" for="formSwitch2">Use ML</label>
-              </div>
-
+            <div class="mt-5">
+              <h7 class="text-muted">Logo Url</h7>
+              <input
+                type="text" 
+                class="form-control" 
+                :class="{
+                'error-border': logoUrlError
+                }"
+                v-model="logoUrl"
+                @keydown="logoUrlError = false"
+                placeholder="logoUrl"
+              >
             </div>
 
 
 
-            <div v-if="me.getUserLevel() >= 50" class="mt-5">
-              <h7 class="text-muted">Department</h7>
-              <select
-                class="form-select" 
+            <div class="mt-5">
+              <h7 class="text-muted">Mail Host</h7>
+              <input
+                type="text" 
+                class="form-control" 
                 :class="{
-                'error-border': departmentError
+                'error-border': mailHostError
                 }"
-                v-model="department"
-                @keydown="departmentError = false"
+                v-model="mailHost"
+                @keydown="mailHostError = false"
+                placeholder="mailHost"
               >
-                <option
-                  v-for="department in departments"
-                  :key="department.id"
-                  :value="department.id"
-                  v-text="departmentUserName(department) + department.department"
-                ></option>
-                </select>
+            </div>
+
+
+
+
+            <div class="mt-5">
+              <h7 class="text-muted">Mail Username</h7>
+              <input
+                type="text" 
+                class="form-control" 
+                :class="{
+                'error-border': mailUsernameError
+                }"
+                v-model="mailUsername"
+                @keydown="mailUsernameError = false"
+                placeholder="mailUsername"
+              >
+            </div>
+
+
+            <div class="mt-5">
+              <h7 class="text-muted">Mail Password</h7>
+              <input
+                type="text" 
+                class="form-control" 
+                :class="{
+                'error-border': mailPasswordError
+                }"
+                v-model="mailPassword"
+                @keydown="mailPasswordError = false"
+                placeholder="mailPassword"
+              >
+            </div>
+
+
+
+            <div class="mt-5">
+              <div class="row">
+                <div class="col-6">
+                  <h7 class="text-muted">Pop Port</h7>
+                  <input
+                    type="number" 
+                    class="form-control" 
+                    :class="{
+                    'error-border': popPortError
+                    }"
+                    v-model="popPort"
+                    @keydown="popPortError = false"
+                    placeholder="popPort"
+                  >
+              </div>                
+              <div class="col-6">
+                  <h7 class="text-muted">SMTP Port</h7>
+                  <input
+                    type="number" 
+                    class="form-control" 
+                    :class="{
+                    'error-border': smtpPortError
+                    }"
+                    v-model="smtpPort"
+                    @keydown="smtpPortError = false"
+                    placeholder="smtpPort"
+                  >
               </div>
+            </div>
+            </div>
+
+
+
+
+            <div class="mt-5">
+              <h7 class="text-muted"> API Base Url</h7>
+              <input
+                type="text" 
+                class="form-control" 
+                :class="{
+                'error-border': apiBaseUrlError
+                }"
+                v-model="apiBaseUrl"
+                @keydown="apiBaseUrlError = false"
+                placeholder="apiBaseUrl"
+              >
+            </div>
+
+
+
+
+
+            <div class="mt-5">
+              <h7 class="text-muted">API Token</h7>
+              <input
+                type="text" 
+                class="form-control" 
+                :class="{
+                'error-border': apiTokenError
+                }"
+                v-model="apiToken"
+                @keydown="apiTokenError = false"
+                placeholder="apiToken"
+              >
+            </div>
+
+
+
+
           </div>
 
           <!-- End Col -->
@@ -455,12 +609,12 @@ let deleteReply = () => {
                 'error-border': messageError
               }">
           <!-- Card -->
-          <h7 class="text-muted">Message</h7>
+          <h7 class="text-muted">signature</h7>
 
               <!-- Quill -->
               <div class="quill-custom">
                 <div class="js-quill" style="height: 15rem;" data-hs-quill-options='{
-                     "placeholder": "Type your message...",
+                     "placeholder": "Type your signature...",
                       "modules": {
                         "toolbar": [
                           ["bold", "italic", "underline", "strike", "link", "image", "blockquote", "code", {"list": "bullet"}]
@@ -482,7 +636,7 @@ let deleteReply = () => {
               <button
                 v-if="id>0"
                 class="btn btn-danger"
-                @click="deleteReply"
+                @click="deleteDepartment"
               >
                 <i class="bi-x-lg me-1"></i> Delete Department
               </button>
