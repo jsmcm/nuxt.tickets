@@ -9,7 +9,6 @@ let props = defineProps({
 });
 
 
-
 let messageBorder = computed(() => {
 
     if (props.thread.type == "from-client") {
