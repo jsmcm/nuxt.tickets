@@ -2,9 +2,8 @@
 
 import VueJwtDecode from "vue-jwt-decode";
 
-
 import axios from "axios";
-let config = useConfig();
+let config = useRuntimeConfig();
 
 let auth = useAuth();
 let me = useMe();
@@ -37,7 +36,7 @@ let name = computed(() => {
 let signOut = () => {
 
   axios
-    .post(config.apiUrl + "/api/auth/logout", {},
+    .post(config.public.apiUrl + "/api/auth/logout", {},
     {
         headers: {
           Authorization: "Bearer " + auth.access_token,

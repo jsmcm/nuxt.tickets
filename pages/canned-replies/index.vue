@@ -3,15 +3,9 @@
   import axios from "axios";
   import sweetalert from "sweetalert";
 
-  let config = useConfig();
+  let config = useRuntimeConfig();
 
-//   let router = useRouter();
-
-//   let { id } = useRoute().params;
-  
   let auth = useAuth();
-//   let me = useMe();
-
 
 
 let cannedReplies = ref([]);
@@ -25,7 +19,7 @@ let cannedReplies = ref([]);
       }); 
 
 
-      axios.get(config.apiUrl + "/api/canned-replies", {
+      axios.get(config.public.apiUrl + "/api/canned-replies", {
         headers: {
           Authorization: "Bearer " + auth.access_token
         }
@@ -51,7 +45,7 @@ let useMl = (replyObject) => {
   cannedReplies.value[index].use_ml = replyObject.useMl;
 
   
-    if (useUpdateCannedReply(replyObject.cannedReplyId, cannedReplies.value[index].message, cannedReplies.value[index].title, replyObject.useMl, auth.access_token, config.apiUrl)) {
+    if (useUpdateCannedReply(replyObject.cannedReplyId, cannedReplies.value[index].message, cannedReplies.value[index].title, replyObject.useMl, auth.access_token, config.public.apiUrl)) {
       sweetalert({
         text:  "ML Set",
         title: "ML Set to " + cannedReplies.value[index].use_ml,
@@ -65,7 +59,7 @@ let useMl = (replyObject) => {
 
 let deleteReply = (cannedReplyId) => {
 
-  if (useDeleteCannedReply(cannedReplyId, auth.access_token, config.apiUrl)) {
+  if (useDeleteCannedReply(cannedReplyId, auth.access_token, config.public.apiUrl)) {
 
     const indexToRemove = cannedReplies.value.findIndex(reply => reply.id == cannedReplyId);
 

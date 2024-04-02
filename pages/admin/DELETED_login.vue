@@ -15,40 +15,12 @@ let passwordClass = ref("bi-eye");
 
 let config = useConfig();
 
-// let VueJwtDecode = ref(null);
-
-// onMounted(() => {
-//   if (process.client) {
-    // const module = import('vue-jwt-decode');
-    // VueJwtDecode.value = module.VueJwtDecode || module.default;
-//   }
-// });
-
-
-
-
-//let config = useConfig();
-
 if (process.client) {
   document.title = "Admin Login | Tickets";
 }
 
 let auth = useAuth();
 let me = useMe();
-
-// let loggedIn = auth.loggedIn() ? true : false;
-
-// if (loggedIn) {
-//   let router = useRouter();
-//   router.push("/");
-// }
-
-// let newloggedIn = ref(false);
-
-// let route = useRoute();
-
-// let showAlert = false;
-// let alertMessage = "";
 
 let doLogin = () => {
   
@@ -60,21 +32,8 @@ let doLogin = () => {
       type: "admin",
     })
     .then((response) => {
-      // console.log("response:");
-      // console.log(response);
-      // console.log("response.data:");
-      // console.log(response.data);
 
       let check = VueJwtDecode.decode(response.data.access_token);
-      // console.log("check: ");
-      // console.log(check);
-      // console.log("check.typ: ");
-      // console.log(check.typ);
-
-      // console.log("check.email: ");
-      // console.log(check.email);
-      // console.log("email: ");
-      // console.log(email);
 
       // if (check.typ == "JWT" && check.email == email) {
       if (check.typ == "JWT") {
@@ -87,10 +46,6 @@ let doLogin = () => {
           me.email = response.data.email;
         }
 
-        // if (response.data.mobile) {
-        //   me.mobile = response.data.mobile;
-        // }
-
         if (response.data.id) {
           me.id = response.data.id;
         }
@@ -102,7 +57,6 @@ let doLogin = () => {
         if (response.data.name) {
           me.name = response.data.name;
         }
-
 
 
         sweetalert({
@@ -118,18 +72,10 @@ let doLogin = () => {
         }, 2500);
         router.push("/");
 
-        //loggedIn.value = true;
         return true;
       }
     })
     .catch((reason) => {
-      
-      //auth.logout();
-
-      // console.log("reason: ");
-      // console.log(reason.message);
-      // console.log("reason: ");
-      // console.log();
 
       let swalText = "";
       let swalTitle = "";
@@ -159,13 +105,6 @@ let doLogin = () => {
 
 };
 
-
-// let isLogged = computed(() => {
-//   return newloggedIn.value;
-// });
-
-
-
 let togglePassword = () => {
     if (passwordType.value == "password") {
         passwordType.value = "text";
@@ -181,7 +120,8 @@ let togglePassword = () => {
 
 
 <template>
-    
+
+
   <!-- ========== MAIN CONTENT ========== -->
   <main id="content" role="main" class="main">
     <div class="position-fixed top-0 end-0 start-0 bg-img-start" style="height: 32rem; background-image: url(/assets/svg/components/card-6.svg);">

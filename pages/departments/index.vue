@@ -3,12 +3,9 @@
   import axios from "axios";
   import sweetalert from "sweetalert";
 
-  let config = useConfig();
+  let config = useRuntimeConfig();
   
   let auth = useAuth();
-
-
-
 
 let departments = ref([]);
 
@@ -21,7 +18,7 @@ let departments = ref([]);
       }); 
 
 
-      axios.get(config.apiUrl + "/api/departments", {
+      axios.get(config.public.apiUrl + "/api/departments", {
         headers: {
           Authorization: "Bearer " + auth.access_token
         }
@@ -41,117 +38,9 @@ let departments = ref([]);
 
   });
 
-
-// const now = new Date();
-
-// const year = now.getFullYear();
-// const month = String(now.getMonth() + 1).padStart(2, '0'); // month is zero-indexed
-// const day = String(now.getDate()).padStart(2, '0');
-// const hours = String(now.getHours()).padStart(2, '0');
-// const minutes = String(now.getMinutes()).padStart(2, '0');
-// const seconds = String(now.getSeconds()).padStart(2, '0');
-
-
-// let formErrors = ref("");
-
-// let config = useConfig();
-// let ticket = ref([]);
-// let threads = ref([]);
-// let subject = ref("");
-// let subjectError = ref(false);
-
-// let email = ref("");
-// let clientName = ref("");
-
-
-// let emailError = ref(false);
-// let clientNameError = ref(false);
-
-// let department = ref("");
-// let departmentError = ref(false);
-
-// let messageError = ref(false);
-// let status = ref("");
-// let user = reactive({});
-
-// let submitDisabled = ref(false);
-
-
-
-// let closeTicket = () => {
-
-//   //console.log("closeTicket " + id);
-
-// axios
-//   .patch(config.apiUrl + "/api/ticket/" + id,
-//   {
-//     status: 'closed'
-//   },
-//   {
-//     headers: {
-//       Authorization: "Bearer " + auth.access_token,
-//     }
-//   })
-//   .then((response) => {
-
-//     // console.log("response: ");
-//     // console.log(response);
-//       if (response.status == 200 && response.data.status == "success") {
-//         return true;
-//       }
-    
-//   })
-//   .catch((error) => {
-    
-//       // console.log("error 1: ");
-//       // console.log(error);
-    
-//   });
-
-//   return false;
-
-// }
-
-
-
-
-// let close = () => {
-
-
-//   sweetalert({
-    
-//     text: "Really close this ticket?",
-//     title: "Are you sure?",
-//     icon: "warning",      
-//     buttons: ["No, keep it open!", "Yes, I am sure!"],
-//     dangerMode: true,
-
-//   }).then(function (isConfirm) {
-//     if (isConfirm) {
-     
-//       closeTicket();
-//       router.push("/");
-
-//     } else {
-     
-//       sweetalert({
-    
-//         text: "Not closing ticket...",
-//         title: "Not closing",
-//         icon: "success",  
-//         timer: 3500
-//       });
-
-
-//     }
-//   });
-
-// };
-
-
 let deleteDepartment = (departmentId) => {
 
-  if (useDeleteDepartment(departmentId, auth.access_token, config.apiUrl)) {
+  if (useDeleteDepartment(departmentId, auth.access_token, config.public.apiUrl)) {
 
     const indexToRemove = departments.value.findIndex(department => department.id == departmentId);
 
@@ -174,6 +63,7 @@ let deleteDepartment = (departmentId) => {
 
 <template>
 
+
   <LayoutSiteMain>
 
 
@@ -184,7 +74,6 @@ let deleteDepartment = (departmentId) => {
         <div class="row align-items-center mb-1">
           <div class="col-sm mb-2 mb-sm-0">
             <h1 class="page-header-title">Departments</h1>
-			
           </div>
           <!-- End Col -->
 

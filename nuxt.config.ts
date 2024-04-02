@@ -2,6 +2,9 @@
 export default defineNuxtConfig({
   //devtools: { enabled: true },
 
+    ssr: true,
+
+
     app: {
         head: {
             script: [
@@ -21,6 +24,13 @@ export default defineNuxtConfig({
             //     },
             // ],
               
+        }
+    },
+
+    runtimeConfig: {
+        public: {
+            appUrl      : process.env.APP_URL,
+            apiUrl      : process.env.API_URL,
         }
     },
 

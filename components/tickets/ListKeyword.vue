@@ -1,37 +1,27 @@
 <script setup>
 
-// import { useConfig } from "@/stores/Config.js";
 import axios from "axios";
 
 let props = defineProps({
     searchTerm: String
 });
 
-let config = useConfig();
+let config = useRuntimeConfig();
 
 
 let auth = useAuth();
 let me = useMe();
 
-// console.log("auth: ");
-// console.log(auth);
-// console.log("me: ");
-// console.log(me.getUserEmail());
-
-// let config = useConfig();
 let tickets = ref({});
 
 let getTickets = () => {
   
-    console.log(config.apiUrl + "/api/tickets/search?search=" + props.searchTerm);
-    let results = axios.get(config.apiUrl + "/api/tickets/search?search=" + props.searchTerm, {
+    let results = axios.get(config.public.apiUrl + "/api/tickets/search?search=" + props.searchTerm, {
         headers: {
             Authorization: "Bearer " + auth.access_token
         }
     })
     .then((response) => {
-        console.log("response:");
-        console.log(response.data.data);
         tickets.value = response.data.data;
     })
     .catch((err) => {

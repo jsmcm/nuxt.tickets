@@ -5,7 +5,7 @@
   import axios from "axios";
   import sweetalert from "sweetalert";
 
-  let config = useConfig();
+  let config = useRuntimeConfig();
 
   let router = useRouter();
 
@@ -73,7 +73,7 @@ let getCannedReply = (id) => {
   }
 
   axios
-    .get(config.apiUrl + "/api/canned-replies/" + id,
+    .get(config.public.apiUrl + "/api/canned-replies/" + id,
     {
       headers: {
         Authorization: "Bearer " + auth.access_token
@@ -123,7 +123,7 @@ let createCannedReply = async () => {
       var myEditor = document.querySelector('.js-quill')
       var html = myEditor.children[0].innerHTML
 
-      const response = await axios.post(config.apiUrl + "/api/canned-replies", {
+      const response = await axios.post(config.public.apiUrl + "/api/canned-replies", {
         message : html,
         title   : title.value, 
         department: department.value,
@@ -241,7 +241,7 @@ let saveCannedReply = (cannedReplyId) => {
   var myEditor = document.querySelector('.js-quill')
   var html = myEditor.children[0].innerHTML
 
-  if (useUpdateCannedReply(cannedReplyId, html, title.value, useMl.value, auth.access_token, config.apiUrl)) {
+  if (useUpdateCannedReply(cannedReplyId, html, title.value, useMl.value, auth.access_token, config.public.apiUrl)) {
     sweetalert({
       text:  "Saved",
       title: "Canned reply updated",
@@ -273,7 +273,7 @@ onMounted(() => {
   let getDepartments = () => {
 
     axios
-      .get(config.apiUrl + "/api/departments",
+      .get(config.public.apiUrl + "/api/departments",
       {
         headers: {
           Authorization: "Bearer " + auth.access_token,
@@ -345,7 +345,7 @@ let deleteReply = () => {
   }).then(function (isConfirm) {
       if (isConfirm) {
     
-        if (useDeleteCannedReply(id, auth.access_token, config.apiUrl)) {
+        if (useDeleteCannedReply(id, auth.access_token, config.public.apiUrl)) {
 
           router.push("/canned-replies");
 

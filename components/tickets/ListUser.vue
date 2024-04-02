@@ -1,13 +1,12 @@
 <script setup>
 
-// import { useConfig } from "@/stores/Config.js";
 import axios from "axios";
 
 let props = defineProps({
     searchTerm: String
 });
 
-let config = useConfig();
+let config = useRuntimeConfig();
 
 
 let auth = useAuth();
@@ -23,7 +22,7 @@ let tickets = ref({});
 
 let getTickets = () => {
   
-    let results = axios.get(config.apiUrl + "/api/tickets/user-search?search=" + props.searchTerm, {
+    let results = axios.get(config.public.apiUrl + "/api/tickets/user-search?search=" + props.searchTerm, {
         headers: {
             Authorization: "Bearer " + auth.access_token
         }

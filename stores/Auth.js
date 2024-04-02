@@ -1,8 +1,4 @@
 import { defineStore } from "pinia";
-// import { persistedState } from "@pinia-plugin-persistedstate/nuxt"
-// import { onMounted } from "vue";
-
-// import { useMe } from "../stores/Me";
 
 import VueJwtDecode from "vue-jwt-decode";
 

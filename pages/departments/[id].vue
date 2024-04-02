@@ -5,7 +5,7 @@
   import axios from "axios";
   import sweetalert from "sweetalert";
 
-  let config = useConfig();
+  let config = useRuntimeConfig();
 
   let router = useRouter();
 
@@ -110,7 +110,7 @@ let getDepartment = (id) => {
   }
 
   axios
-    .get(config.apiUrl + "/api/departments/" + id,
+    .get(config.public.apiUrl + "/api/departments/" + id,
     {
       headers: {
         Authorization: "Bearer " + auth.access_token
@@ -171,7 +171,7 @@ let createDepartment = async () => {
       var myEditor = document.querySelector('.js-quill')
       var html = myEditor.children[0].innerHTML
 
-      const response = await axios.post(config.apiUrl + "/api/departments", {
+      const response = await axios.post(config.public.apiUrl + "/api/departments", {
         // message : html,
         // title   : title.value, 
         // department: department.value,
@@ -302,7 +302,7 @@ let saveDepartment = (departmentId) => {
     apiBaseUrl.value,
     apiToken.value,
     auth.access_token,
-    config.apiUrl
+    config.public.apiUrl
   )) {
     sweetalert({
       text:  "Saved",
@@ -337,7 +337,7 @@ onMounted(() => {
   let getDepartments = () => {
 
     axios
-      .get(config.apiUrl + "/api/departments",
+      .get(config.public.apiUrl + "/api/departments",
       {
         headers: {
           Authorization: "Bearer " + auth.access_token,
@@ -385,7 +385,7 @@ let deleteDepartment = () => {
   }).then(function (isConfirm) {
       if (isConfirm) {
     
-        if (useDeleteDepartment(id, auth.access_token, config.apiUrl)) {
+        if (useDeleteDepartment(id, auth.access_token, config.public.apiUrl)) {
 
           router.push("/departments");
 

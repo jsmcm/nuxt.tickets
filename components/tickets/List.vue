@@ -1,9 +1,8 @@
 <script setup>
 
-// import { useConfig } from "@/stores/Config.js";
 import axios from "axios";
 
-let config = useConfig();
+let config = useRuntimeConfig();
 
 
 let auth = useAuth();
@@ -20,7 +19,7 @@ let tickets = ref({});
 let getTickets = () => {
   
   axios
-    .get(config.apiUrl + "/api/tickets",
+    .get(config.public.apiUrl + "/api/tickets",
       {
         headers: {
           Authorization: "Bearer " + auth.access_token,

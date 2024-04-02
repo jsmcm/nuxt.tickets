@@ -6,7 +6,7 @@
   import axios from "axios";
   import sweetalert from "sweetalert";
 
-  let config = useConfig();
+  let config = useRuntimeConfig();
 
   let router = useRouter();
 
@@ -30,7 +30,7 @@
 
       myDropzone = new Dropzone(".dropzone2",
     {
-      url: config.apiUrl + "/api/attachment",
+      url: config.public.apiUrl + "/api/attachment",
       previewTemplate:'<div class="col h-100 mb-4">    <div class="dz-preview dz-file-preview">      <div class="d-flex justify-content-end dz-close-icon">        <small class="bi-x" data-dz-remove></small>      </div>      <div class="dz-details d-flex">        <div class="dz-img flex-shrink-0">         <img class="img-fluid dz-img-inner" data-dz-thumbnail>        </div>        <div class="dz-file-wrapper flex-grow-1">         <h7 class="dz-filename">          <span class="dz-title" data-dz-name></span>         </h7>         <div class="dz-size" data-dz-size></div>        </div>      </div>      <div class="dz-progress progress">        <div class="dz-upload progress-bar bg-success" role="progressbar" style="width: 0" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" data-dz-uploadprogress></div>      </div>      <div class="d-flex align-items-center">        <div class="dz-success-mark">          <span class="bi-check-lg"></span>        </div>        <div class="dz-error-mark">          <span class="bi-x-lg"></span>        </div>        <div class="dz-error-message">          <small data-dz-errormessage></small>        </div>      </div>    </div></div>',
       thumbnailWidth:300,
       thumbnailHeight:300,
@@ -136,7 +136,7 @@ let getTicket = (id) => {
   }
 
   axios
-    .get(config.apiUrl + "/api/tickets/" + id,
+    .get(config.public.apiUrl + "/api/tickets/" + id,
     {
       headers: {
         Authorization: "Bearer " + auth.access_token
@@ -221,7 +221,7 @@ let merge = () => {
 
 
   axios
-  .patch(config.apiUrl + "/api/tickets/merge/" + id,
+  .patch(config.public.apiUrl + "/api/tickets/merge/" + id,
   {
     ticket_id: mergeTicketNumber.value
   },
@@ -263,7 +263,7 @@ let merge = () => {
 let createTicket = async () => {
 
   try {
-      const response = await axios.post(config.apiUrl + "/api/tickets/", {
+      const response = await axios.post(config.public.apiUrl + "/api/tickets/", {
           email: email.value,
           firstName: clientName.value,
           departmentId: department.value.id,
@@ -354,7 +354,7 @@ let doDeleteTicket = () => {
 
 //console.log("closeTicket " + id);
 axios
-.delete(config.apiUrl + "/api/tickets/" + id,
+.delete(config.public.apiUrl + "/api/tickets/" + id,
 {
   headers: {
     Authorization: "Bearer " + auth.access_token,
@@ -444,7 +444,7 @@ let closeTicket = () => {
   //console.log("closeTicket " + id);
 
 axios
-  .patch(config.apiUrl + "/api/tickets/" + id,
+  .patch(config.public.apiUrl + "/api/tickets/" + id,
   {
     status: 'closed'
   },
@@ -565,7 +565,7 @@ var myEditor = document.querySelector('.js-quill')
 var html = myEditor.children[0].innerHTML
 
 axios
-.post(config.apiUrl + "/api/thread/" + ticketId, {
+.post(config.public.apiUrl + "/api/thread/" + ticketId, {
     message       : html,
     type          : replyType.value,
     randomString  : ticketRandom,
@@ -670,7 +670,7 @@ function generateRandomString(length) {
   let getDepartments = () => {
 
     axios
-      .get(config.apiUrl + "/api/departments",
+      .get(config.public.apiUrl + "/api/departments",
       {
         headers: {
           Authorization: "Bearer " + auth.access_token,
