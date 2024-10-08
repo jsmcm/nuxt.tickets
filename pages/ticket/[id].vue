@@ -532,7 +532,7 @@ let save = () => {
     createTicket().then(ticketId => {
 
       if ( (!isNaN(ticketId)) && (ticketId > 0)) {
-        saveThread(ticketId, true);
+        saveThread(ticketId, false);
       }
 
     }).catch(error => {
