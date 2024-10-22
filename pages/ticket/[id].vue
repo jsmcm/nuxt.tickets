@@ -144,8 +144,8 @@ let getTicket = (id) => {
     })
     .then((response) => {
 
-      console.log("response:");
-      console.log(response);
+      // console.log("response:");
+      // console.log(response);
       ticket.value = response.data.data;
       user = response.data.data.user;
       threads.value = response.data.data.thread;
@@ -155,8 +155,8 @@ let getTicket = (id) => {
     })
     .catch((error) => {
       
-        console.log("error: ");
-        console.log(error);
+        // console.log("error: ");
+        // console.log(error);
 
         if (error.response.status == 403) {
           sweetalert({
@@ -564,13 +564,14 @@ let saveThread = (ticketId, skipEmail=false) => {
 var myEditor = document.querySelector('.js-quill')
 var html = myEditor.children[0].innerHTML
 
+
 axios
 .post(config.public.apiUrl + "/api/thread/" + ticketId, {
     message       : html,
     type          : replyType.value,
     randomString  : ticketRandom,
-    skipEmail     : skipEmail
-
+    skipEmail     : skipEmail,
+    cannedReply   : cannedReply.value.substring(0, cannedReply.value.indexOf('['))
   },
   {
       headers: {
@@ -580,8 +581,8 @@ axios
 )
 .then((response) => {
   
-  console.log("response: ");
-  console.log(response);
+  // console.log("response: ");
+  // console.log(response);
 
   if (response.status == 200) {
 
@@ -591,8 +592,8 @@ axios
       return;
     }
 
-    console.log("pre:");
-    console.log(threads);
+    // console.log("pre:");
+    // console.log(threads);
     const now = new Date();
 
     const year = now.getFullYear();
