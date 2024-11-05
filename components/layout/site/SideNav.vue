@@ -66,6 +66,14 @@
             </div>
 
 
+            <div v-if="me.getUserLevel() >= 100" class="nav-item">
+              <NuxtLink class="nav-link" to="/ml-canned-replies" data-placement="left">
+                <i class="bi-cpu nav-icon"></i>
+                <span class="nav-link-title">ML Canned Replies</span>
+              </NuxtLink>
+            </div>
+
+
 
           </div>
 
