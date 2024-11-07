@@ -20,7 +20,7 @@
 
       useHead(() => {
           return {
-              title: "SmartSupport.ai | Canned Reply",
+              title: "SmartSupport.ai | ML Canned Reply",
           }
       }); 
 
@@ -48,32 +48,17 @@ if (me.getUserLevel() < 50) {
 }
 
 
-let title = ref("");
-let titleError = ref(false);
-
-let department = ref("");
-let departmentError = ref(false);
-
-let message = ref("");
-let messageError = ref(false);
-
-let useMl = ref(false);
-
-
-let status = ref("");
-let user = reactive({});
+let thread = ref({})
+let allCannedReplies = ref([]);
 
 let submitDisabled = ref(false);
 
-let getCannedReply = (id) => {
+
+let getThread = (id) => {
   
-  // This is a new ticket
-  if (id == 0) {
-    return;
-  }
 
   axios
-    .get(config.public.apiUrl + "/api/canned-replies/" + id,
+    .get(config.public.apiUrl + "/api/thread/" + id,
     {
       headers: {
         Authorization: "Bearer " + auth.access_token
@@ -84,15 +69,7 @@ let getCannedReply = (id) => {
       console.log("response:");
       console.log(response);
 
-      title.value = response.data.data.title;
-      message.value = response.data.data.message;
-
-      useMl.value = !!response.data.data.use_ml;
-      department.value = response.data.data.department_id;
-
-      var myEditor = document.querySelector('.js-quill')
-      myEditor.children[0].innerHTML = message.value;
-
+      thread.value = response.data;
     })
     .catch((error) => {
       
@@ -258,79 +235,20 @@ let saveCannedReply = (cannedReplyId) => {
 
 
 onMounted(() => {
+  getThread(id);
 
-  getCannedReply(id);
+
 })
 
+watch(thread, (newValue) => {
+  let replies = useGetWithExpiry("canned_replies");
+  allCannedReplies.value = replies.filter(reply => reply.department_id == thread.value.ticket.department.id);
 
-
-
-
-
-
-  let departments = ref([]);
-
-  let getDepartments = () => {
-
-    axios
-      .get(config.public.apiUrl + "/api/departments",
-      {
-        headers: {
-          Authorization: "Bearer " + auth.access_token,
-        }
-      })
-      .then((response) => {
-
-        // console.log("response: ");
-        // console.log(response);
-          if (response.status == 200 && response.data.status == "success") {
-            departments.value = response.data.data;
-          }
-        
-      })
-      .catch((error) => {
-        
-          console.log("error 1: ");
-          console.log(error);
-        
-      });
-
-  }
-
-
-  onMounted(() => {
-    getDepartments();
+  allCannedReplies.value = allCannedReplies.value.map(reply => {
+    reply.slug = reply.slug.substring(0, reply.slug.indexOf('['))
+    return reply;
   });
-
-
-
-  
-  function departmentUserName(department)
-  {
-
-    if (department.user) {
-      return department.user.name + " - ";
-    } else {
-      return "";
-    }
-
-  }
-
-
-  let newThreadTitle = computed(() => {
-  
-    if (id == 0) {
-      return "Message"
-    }
-    
-    if (replyType.value == "to-client" || replyType.value == "from-client") {
-      return "Reply";
-    }
-    
-    return "Internal Note";
-
-  });
-
+});
 
   
 let deleteReply = () => {
@@ -373,13 +291,22 @@ let deleteReply = () => {
 }
 
 
+let sortedCannedReplies = computed(() => {
 
+  return allCannedReplies.value.sort((a, b) => {
+    if (a.title < b.title) {
+      return -1;
+    }
+    if (a.title > b.title) {
+      return 1;
+    }
+    return 0;
+  });
+});
 
 </script>
 
 <template>
-
- 
 
   <LayoutSiteMain>
     <!-- Content -->
@@ -391,55 +318,10 @@ let deleteReply = () => {
 
           <div class="col-sm mb-2 mb-sm-0">
 
-            <h1 class="page-header-title">New Canned Reply</h1>
+            <h1 class="page-header-title">ML Canned Reply</h1>
 
-            <div class="mt-5">
-              <h7 class="text-muted">Title</h7>
-              <input
-                type="text" 
-                class="form-control" 
-                :class="{
-                'error-border': titleError
-                }"
-                v-model="title"
-                @keydown="titleError = false"
-                placeholder="Canned Reply"
-              >
-            </div>
-
-
-            <div class="mt-5">
-
-              <div class="form-check form-switch mb-4">
-                <input
-                  v-model="useMl"
-                  type="checkbox"
-                  class="form-check-input"
-                >
-                <label class="form-check-label" for="formSwitch2">Use ML</label>
-              </div>
-
-            </div>
-
-
-
-            <div v-if="me.getUserLevel() >= 50" class="mt-5">
-              <h7 class="text-muted">Department</h7>
-              <select
-                class="form-select" 
-                :class="{
-                'error-border': departmentError
-                }"
-                v-model="department"
-                @keydown="departmentError = false"
-              >
-                <option
-                  v-for="department in departments"
-                  :key="department.id"
-                  :value="department.id"
-                  v-text="departmentUserName(department) + department.department"
-                ></option>
-                </select>
+              <div class="mt-5">
+                <h7 class="text-muted">Department: {{ thread?.ticket?.department?.department ?? "" }}</h7>
               </div>
           </div>
 
@@ -449,7 +331,27 @@ let deleteReply = () => {
 		
       </div>
       <!-- End Page Header -->
-	  
+     
+      <div class="row">
+        <div class="col-lg-12 mb-3 mb-lg-0" :class="{
+                'error-border': messageError
+              }">
+          <select
+            class="form-select form-select-sm"
+            v-model="thread.canned_reply"
+          >
+            <option value="" :key="-1">Canned Reply</option>
+            <option v-for="aCannedReply in sortedCannedReplies"
+              :key="aCannedReply.id"
+              :value="aCannedReply.slug"
+            >
+              {{ aCannedReply.slug }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+
       <div class="row">
         <div class="col-lg-12 mb-3 mb-lg-0" :class="{
                 'error-border': messageError
@@ -459,15 +361,7 @@ let deleteReply = () => {
 
               <!-- Quill -->
               <div class="quill-custom">
-                <div class="js-quill" style="height: 15rem;" data-hs-quill-options='{
-                     "placeholder": "Type your message...",
-                      "modules": {
-                        "toolbar": [
-                          ["bold", "italic", "underline", "strike", "link", "image", "blockquote", "code", {"list": "bullet"}]
-                        ]
-                      }
-                     }'>
-                </div>
+                <textarea class="form-control textarea" style="height: 350px;">{{ thread.message }}</textarea>
               </div>
               <!-- End Quill -->
   

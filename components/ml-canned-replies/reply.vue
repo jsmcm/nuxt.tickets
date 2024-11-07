@@ -65,7 +65,7 @@
         <td>{{ reply.ticket?.department?.department ?? "" }}</td>
         <td>
             <NuxtLink
-                :to="'/canned-replies/' + reply.id"
+                :to="'/ml-canned-replies/' + reply.id"
                 class="btn btn-success btn-icon mx-2"
             >
                 <i class="bi-pencil-square"></i>
