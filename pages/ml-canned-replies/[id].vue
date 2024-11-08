@@ -1,6 +1,5 @@
 <script setup>
   
-  import "~/public/vendor/quill/dist/quill.snow.css";
 
   import axios from "axios";
   import sweetalert from "sweetalert";
@@ -14,25 +13,12 @@
 
   let auth = useAuth();
   let me = useMe();
-  
-  onMounted(() => {
-      HSCore.components.HSQuill.init('.js-quill');
 
-      useHead(() => {
-          return {
-              title: "SmartSupport.ai | ML Canned Reply",
-          }
-      }); 
-
-  });
 
 
 let formErrors = ref("");
 
 // let config = useConfig();
-let ticket = ref([]);
-let threads = ref([]);
-let subjectError = ref(false);
 
 let email = ref("");
 let clientName = ref("");
@@ -49,13 +35,15 @@ if (me.getUserLevel() < 50) {
 
 
 let thread = ref({})
+let message = ref("")
 let allCannedReplies = ref([]);
+let cannedReplySlugError = ref(false);
+let messageError = ref(false);
 
 let submitDisabled = ref(false);
 
 
 let getThread = (id) => {
-  
 
   axios
     .get(config.public.apiUrl + "/api/thread/" + id,
@@ -65,17 +53,10 @@ let getThread = (id) => {
       }
     })
     .then((response) => {
-
-      console.log("response:");
-      console.log(response);
-
       thread.value = response.data;
+      message.value = thread.value.message;
     })
     .catch((error) => {
-      
-        console.log("error: ");
-        console.log(error);
-
         if (error.response.status == 403) {
           sweetalert({
             title: "Forbidden",
@@ -86,76 +67,24 @@ let getThread = (id) => {
 
           router.push("/");
         }
-
-      
     });
   
 };
   
-
-let createCannedReply = async () => {
-
-  try {
-
-      var myEditor = document.querySelector('.js-quill')
-      var html = myEditor.children[0].innerHTML
-
-      const response = await axios.post(config.public.apiUrl + "/api/canned-replies", {
-        message : html,
-        title   : title.value, 
-        department: department.value,
-        use_ml  : useMl.value,
-      }, {
-        headers: {
-          Authorization: "Bearer " + auth.access_token
-        }
-      })
-      .then((response) => {
-
-        console.log("response:", response);
-
-        if (response.status === 200) {
-            return true
-        } else {
-            // console.error("Non-200 response status:", response.status);
-            return false; // or throw an error, or handle differently as per your use case
-        }
-
-      })
-      .catch((err) => {
-        console.log("err:", err);
-      });
-
-    return response;
-  } catch (error) {
-    throw (error);
-  }
-}
-
 
 
 let errors = () => {
 
   formErrors.value = "";
 
-  // new canned reply
-  if (title.value == "") {
-    titleError.value = true;
-    formErrors.value += "<li>Title cannot be blank</li>";
+  // canned reply
+  if (thread.value.canned_reply == "") {
+    cannedReplySlugError.value = true;
+    formErrors.value += "<li>Canned reply slug must be selected</li>";
   }
 
   
-  if (department.value == "") {
-    departmentError.value = true;
-    formErrors.value += "<li>Select a department</li>";
-  }
-
-
-  var myEditor = document.querySelector('.js-quill')
-  var html = myEditor.children[0].innerHTML
-
-
-  if (html == "" || html == "<p></p>" || html == "<p><br></p>") {
+  if (message.value == "") {
     messageError.value = true;
     formErrors.value += "<li>Message cannot be blank</li>";
   }
@@ -175,50 +104,14 @@ let save = () => {
     return;
   }
 
-  if (id == 0) {
-
-    // New CannedReply
-    createCannedReply()
-    .then((response) => {
-      console.log("Response: ");
-      console.log(response);
-      if (response) {
-        sweetalert({
-          text:  "Saved",
-          title: "Canned reply saved",
-          icon: "success",
-          timer: 1500
-        });
-
-        router.push("/canned-replies");
-      }
-    })
-    .catch((error) => {
-        console.error("Error creating ticket:", error);
-    });
-
-
-
-  } else {
-    saveCannedReply(id);
-  }
-
+  saveCannedReply(id);
+  
 };
 
 
+let saveCannedReply = (threadId) => {
 
-
-
-
-
-
-
-let saveCannedReply = (cannedReplyId) => {
-  
-  var myEditor = document.querySelector('.js-quill')
-  var html = myEditor.children[0].innerHTML
-
-  if (useUpdateCannedReply(cannedReplyId, html, title.value, useMl.value, auth.access_token, config.public.apiUrl)) {
+  if (useUpdateMLCannedReply(threadId, message.value, thread.value.canned_reply, auth.access_token, config.public.apiUrl)) {
     sweetalert({
       text:  "Saved",
       title: "Canned reply updated",
@@ -227,18 +120,15 @@ let saveCannedReply = (cannedReplyId) => {
     });
   }
 
+  router.push("/ml-canned-replies");
+
 };
-
-
-
-
 
 
 onMounted(() => {
   getThread(id);
+});
 
-
-})
 
 watch(thread, (newValue) => {
   let replies = useGetWithExpiry("canned_replies");
@@ -252,10 +142,8 @@ watch(thread, (newValue) => {
 
   
 let deleteReply = () => {
-
-
   sweetalert({
-      text: "Really delete this canned reply?",
+      text: "Really delete this canned reply? It only marks the ML slug as delete, the thread is still safe",
       title: "Are you sure?",
       icon: "warning",      
       buttons: ["No, keep it!", "Yes, I am sure!"],
@@ -263,9 +151,9 @@ let deleteReply = () => {
   }).then(function (isConfirm) {
       if (isConfirm) {
     
-        if (useDeleteCannedReply(id, auth.access_token, config.public.apiUrl)) {
+        if (useDeleteMLCannedReply(id, auth.access_token, config.public.apiUrl)) {
 
-          router.push("/canned-replies");
+          router.push("/ml-canned-replies");
 
           sweetalert({
             text:  "Canned Reply Deleted",
@@ -332,12 +220,14 @@ let sortedCannedReplies = computed(() => {
       </div>
       <!-- End Page Header -->
      
-      <div class="row">
-        <div class="col-lg-12 mb-3 mb-lg-0" :class="{
-                'error-border': messageError
-              }">
+      <div class="row mb-5">
+        <div class="col-lg-12 mb-3 mb-lg-0">
+              <h7 class="text-muted">Canned Reply Slug</h7>
           <select
             class="form-select form-select-sm"
+            :class="{
+                'error-border': cannedReplySlugError
+              }"
             v-model="thread.canned_reply"
           >
             <option value="" :key="-1">Canned Reply</option>
@@ -353,15 +243,16 @@ let sortedCannedReplies = computed(() => {
 
 
       <div class="row">
-        <div class="col-lg-12 mb-3 mb-lg-0" :class="{
-                'error-border': messageError
-              }">
+        <div class="col-lg-12 mb-3 mb-lg-0">
           <!-- Card -->
           <h7 class="text-muted">Message</h7>
 
               <!-- Quill -->
               <div class="quill-custom">
-                <textarea class="form-control textarea" style="height: 350px;">{{ thread.message }}</textarea>
+                <textarea class="form-control textarea" :class="{
+                'error-border': messageError
+              }" style="height: 350px;" v-model="message"></textarea>
+
               </div>
               <!-- End Quill -->
   

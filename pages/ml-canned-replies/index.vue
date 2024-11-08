@@ -6,7 +6,7 @@
   let config = useRuntimeConfig();
 
   let auth = useAuth();
-
+  let showAll = ref(false)
 
 let cannedReplies = ref([]);
 
@@ -18,31 +18,17 @@ let cannedReplies = ref([]);
           }
       }); 
 
-
-      axios.get(config.public.apiUrl + "/api/thread/canned-replies", {
-        headers: {
-          Authorization: "Bearer " + auth.access_token
-        }
-      })
-      .then((response) => {
-        console.log("response.data: ");
-        console.log(response.data);
-        cannedReplies.value = response.data;
-      })
-      .catch((err) => {
-        console.log("err: ");
-        console.log(err);
-      });
+      getThreads()
 
 
   });
 
 
-  let deleteReply = (cannedReplyId) => {
+  let deleteReply = (threadId) => {
 
-    if (useDeleteMLCannedReply(cannedReplyId, auth.access_token, config.public.apiUrl)) {
+    if (useDeleteMLCannedReply(threadId, auth.access_token, config.public.apiUrl)) {
 
-      const indexToRemove = cannedReplies.value.findIndex(reply => reply.id == cannedReplyId);
+      const indexToRemove = cannedReplies.value.findIndex(reply => reply.id == threadId);
 
       if (indexToRemove > -1) {
         cannedReplies.value.splice(indexToRemove, 1);
@@ -56,6 +42,27 @@ let cannedReplies = ref([]);
       });
     }
 
+  }
+
+
+  let getThreads = () => {
+
+    console.log(config.public.apiUrl + "/api/thread/canned-replies?showAll=" + showAll.value);
+    axios.get(config.public.apiUrl + "/api/thread/canned-replies?showAll=" + showAll.value, {
+        headers: {
+          Authorization: "Bearer " + auth.access_token
+        }
+      })
+      .then((response) => {
+        cannedReplies.value = response.data;
+      })
+      .catch((err) => {
+      });
+  }
+
+  let toggleShowAll = () => {
+    showAll.value = !showAll.value;
+    getThreads();
   }
 
 
@@ -77,6 +84,11 @@ let cannedReplies = ref([]);
           <!-- End Col -->
         </div>
         <!-- End Row -->
+
+        <button class="btn" :class="{
+          'btn-success': showAll,
+          'btn-primary': !showAll
+        }" @click="toggleShowAll">Show {{ showAll?"New":"All" }}</button>
 
       </div>
       <!-- End Page Header -->
