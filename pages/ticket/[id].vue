@@ -350,14 +350,16 @@ let errors = () => {
 
 
 
-let doDeleteTicket = () => {
+let doDeleteTicket = (ban) => {
 
-//console.log("closeTicket " + id);
 axios
-.delete(config.public.apiUrl + "/api/tickets/" + id,
+.delete(config.public.apiUrl + "/api/tickets/" + id ,
 {
   headers: {
     Authorization: "Bearer " + auth.access_token,
+  },
+  params: {
+    ban: ban
   }
 })
 .then((response) => {
@@ -385,8 +387,7 @@ return false;
 
 
 
-let deleteTicket = () => {
-
+function deleteTicket(ban="false") {
 
 sweetalert({
   
@@ -399,7 +400,7 @@ sweetalert({
 }).then(function (isConfirm) {
   if (isConfirm) {
    
-    doDeleteTicket();
+    doDeleteTicket(ban);
 
   } else {
    
@@ -871,15 +872,15 @@ function generateRandomString(length) {
 		<div class="row align-items-end" v-if="id>0">
 
           <div v-if="me.getUserLevel() > 9" class="col-sm-auto d-grid">
-            <button class="btn btn-danger" @click="deleteTicket">
+            <button class="btn btn-danger" @click="deleteTicket(false)">
               <i class="bi-x-lg me-1"></i> Delete Ticket
             </button>
           </div>
 		  
           <div v-if="me.getUserLevel() > 49" class="col-sm-auto mt-3 d-grid">
-            <a class="btn btn-danger" href="./users-add-user.html">
+            <button class="btn btn-danger" @click="deleteTicket(true)">
               <i class="bi-slash-circle me-1"></i> Delete Ticket and Ban Sender
-            </a>
+            </button>
           </div>
 		  
           <div class="col-sm-auto mt-3 d-grid">
