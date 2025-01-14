@@ -1,6 +1,5 @@
 <script setup>
   
-  import axios from "axios";
   import sweetalert from "sweetalert";
 
   let config = useRuntimeConfig();
@@ -10,33 +9,14 @@
 
 let cannedReplies = ref([]);
 
-  onMounted(() => {
-  
-      useHead(() => {
-          return {
-              title: "SmartSupport.ai | Canned Replies",
-          }
-      }); 
+  onMounted(async () => {
+    useHead(() => {
+      return {
+        title: "SmartSupport.ai | Canned Replies",
+      }
+    }); 
 
-
-      axios.get(config.public.apiUrl + "/api/canned-replies", {
-        headers: {
-          Authorization: "Bearer " + auth.access_token
-        }
-      })
-      .then((response) => {
-        console.log("response: ");
-        console.log(response);
-        cannedReplies.value = response.data.replies;
-        let set_cache = useSetWithExpiry("canned_replies", response.data.replies, 86400000);
-
-      })
-      .catch((err) => {
-        console.log("err: ");
-        console.log(err);
-      });
-
-
+    cannedReplies.value = await useFetchCannedReplies(auth.access_token, config.public.apiUrl);
   });
 
 let useMl = (replyObject) => {

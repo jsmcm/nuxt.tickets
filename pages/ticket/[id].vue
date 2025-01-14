@@ -231,13 +231,9 @@ let merge = () => {
     }
   })
   .then((response) => {
-
-    console.log("response: ");
-    console.log(response);
       if (response.status == 200) {
 
         sweetalert({
-    
           text: "Tickets have been merged and you are now on the merged ticket",
           title: "Tickets Merged",
           icon: "success",      
@@ -756,8 +752,12 @@ function generateRandomString(length) {
   });
 
 
-  watch(department, (newValue) => {
+  watch(department, async (newValue) => {
     let allCannedReplies = useGetWithExpiry("canned_replies");
+
+    if (allCannedReplies == false) {
+      allCannedReplies = await useFetchCannedReplies(auth.access_token, config.public.apiUrl);
+    }
     canned_replies.value = allCannedReplies.filter(reply => reply.department_id == department.value.id);
   });
 

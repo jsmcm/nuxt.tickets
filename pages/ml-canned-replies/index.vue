@@ -46,8 +46,6 @@ let cannedReplies = ref([]);
 
 
   let getThreads = () => {
-
-    console.log(config.public.apiUrl + "/api/thread/canned-replies?showAll=" + showAll.value);
     axios.get(config.public.apiUrl + "/api/thread/canned-replies?showAll=" + showAll.value, {
         headers: {
           Authorization: "Bearer " + auth.access_token
