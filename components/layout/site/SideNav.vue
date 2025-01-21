@@ -74,6 +74,14 @@
             </div>
 
 
+            <div v-if="me.getUserLevel() >= 100" class="nav-item">
+              <NuxtLink class="nav-link" to="/banned-emails" data-placement="left">
+                <i class="bi-envelope-slash nav-icon text-danger"></i>
+                <span class="nav-link-title">Banned Emails</span>
+              </NuxtLink>
+            </div>
+
+
 
           </div>
 
