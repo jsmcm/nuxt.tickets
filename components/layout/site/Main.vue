@@ -1,17 +1,13 @@
 <script setup>
-
     import { useAuth } from "@/stores/Auth";
-
-
+    
     let auth = useAuth();
-
     let loggedIn = auth.loggedIn() ? true : false;
 
     if (!loggedIn) {
         let router = useRouter();
         router.push("/login");
     }
-
 
     useHead({
         bodyAttrs: {
@@ -20,11 +16,9 @@
     })
 
     onMounted(() => {
-
         if (typeof HSSideNav === 'function') {
             new HSSideNav('.js-navbar-vertical-aside').init();
         }
-
     });
 
 </script>

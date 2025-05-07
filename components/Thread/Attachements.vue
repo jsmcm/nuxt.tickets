@@ -5,10 +5,8 @@ let props = defineProps({
 });
 
 let fileName = computed(() => {
-
     let parts = props.attachement.file_url.split("/");
     return parts[parts.length - 1];
-    
 });
 
 </script>

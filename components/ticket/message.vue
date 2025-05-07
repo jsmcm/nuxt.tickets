@@ -24,13 +24,6 @@ let messageBorder = computed(() => {
 
 let sendAttachments = () => {
 
-    // console.log("sending attachments: ");
-    // console.log(props.thread.attachement);
-    // console.log("for: ");
-    // console.log(props.ticket.user.email);
-    // console.log("subject: ");
-    // console.log(props.ticket.subject);
-
     let attachments = [];
     
     for (let x = 0; x < props.thread.attachement.length; x++) {

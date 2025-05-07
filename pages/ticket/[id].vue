@@ -31,7 +31,7 @@
       myDropzone = new Dropzone(".dropzone2",
     {
       url: config.public.apiUrl + "/api/attachment",
-      previewTemplate:'<div class="col h-100 mb-4">    <div class="dz-preview dz-file-preview">      <div class="d-flex justify-content-end dz-close-icon">        <small class="bi-x" data-dz-remove></small>      </div>      <div class="dz-details d-flex">        <div class="dz-img flex-shrink-0">         <img class="img-fluid dz-img-inner" data-dz-thumbnail>        </div>        <div class="dz-file-wrapper flex-grow-1">         <h7 class="dz-filename">          <span class="dz-title" data-dz-name></span>         </h7>         <div class="dz-size" data-dz-size></div>        </div>      </div>      <div class="dz-progress progress">        <div class="dz-upload progress-bar bg-success" role="progressbar" style="width: 0" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" data-dz-uploadprogress></div>      </div>      <div class="d-flex align-items-center">        <div class="dz-success-mark">          <span class="bi-check-lg"></span>        </div>        <div class="dz-error-mark">          <span class="bi-x-lg"></span>        </div>        <div class="dz-error-message">          <small data-dz-errormessage></small>        </div>      </div>    </div></div>',
+      previewTemplate:'<div class="col h-100 mb-4">    <div class="dz-preview dz-file-preview">      <div class="d-flex justify-content-end dz-close-icon">        <small class="bi-x" data-dz-remove></small>      </div>      <div class="dz-details d-flex">        <div class="dz-img flex-shrink-0">         <img class="img-fluid dz-img-inner" data-dz-thumbnail>        </div>        <div class="dz-file-wrapper flex-grow-1">         <h5 class="dz-filename">          <span class="dz-title" data-dz-name></span>         </h5>         <div class="dz-size" data-dz-size></div>        </div>      </div>      <div class="dz-progress progress">        <div class="dz-upload progress-bar bg-success" role="progressbar" style="width: 0" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" data-dz-uploadprogress></div>      </div>      <div class="d-flex align-items-center">        <div class="dz-success-mark">          <span class="bi-check-lg"></span>        </div>        <div class="dz-error-mark">          <span class="bi-x-lg"></span>        </div>        <div class="dz-error-message">          <small data-dz-errormessage></small>        </div>      </div>    </div></div>',
       thumbnailWidth:300,
       thumbnailHeight:300,
 
@@ -68,13 +68,8 @@
     submitDisabled.value = false;
   });
 
-
       getTicket(id);
-
       getDepartments();
-
-
-
 
   });
 
@@ -152,6 +147,10 @@ let getTicket = (id) => {
       subject.value = response.data.data.subject;
       status.value = response.data.data.status;
       department.value = response.data.data.department;
+
+
+      getApiData();
+
     })
     .catch((error) => {
       
@@ -661,7 +660,49 @@ function generateRandomString(length) {
   return result;
 }
 
+ 
+  let apiData = ref({
+    "actions": [],
+    "links": [],
+    "info":[]
+  });
 
+  let getApiData = () => {
+    apiData.value["actions"] = [];
+    apiData.value["links"] = [];
+    apiData.value["info"] = [];
+
+    axios.get(ticket.value.department.api_base_url + "smartsupport/data-from-email", {
+      headers: {
+        Authorization: "Bearer " + ticket.value.department.api_token,
+      }, params: {
+        email: ticket.value.user.email
+      }
+    })
+    .then(response => {
+      if (response.data.actions.length > 0) {
+        response.data.actions.forEach(element => {
+          apiData.value["actions"].push(element);
+        });
+      }
+
+      if (response.data.links.length > 0) {
+        response.data.links.forEach(element => {
+          apiData.value["links"].push(element);
+        });
+      }
+
+      if (response.data.info.length > 0) {
+        response.data.info.forEach(element => {
+          apiData.value["info"].push(element);
+        });
+      }
+
+    })
+    .catch(err => {
+      console.error(err);
+    })
+  };
 
   let departments = ref([]);
 
@@ -788,8 +829,7 @@ function generateRandomString(length) {
       <div class="page-header">
         <div class="row align-items-end">
           <div class="col-sm mb-2 mb-sm-0" v-if="id>0">
-
-            <h7 class="text-muted">Ticket #{{ id }} - {{ status }}; {{ department.department }}</h7>
+            <h5 class="text-muted">Ticket #{{ id }} - {{ status }}; {{ department.department }}</h5>
             <h1 class="page-header-title">{{ subject }}</h1>
             <h4 class="text-muted">{{ user.email }}</h4>
 			
@@ -800,7 +840,7 @@ function generateRandomString(length) {
             <h1 class="page-header-title">New Ticket</h1>
 
             <div v-if="me.getUserLevel() > 49" class="mt-5">
-              <h7 class="text-muted">Email</h7>
+              <h5 class="text-muted">Email</h5>
               <input
                 type="email" 
                 class="form-control" 
@@ -815,7 +855,7 @@ function generateRandomString(length) {
 
 
             <div v-if="me.getUserLevel() > 49" class="mt-5">
-              <h7 class="text-muted">Client Name</h7>
+              <h5 class="text-muted">Client Name</h5>
               <input
                 type="text" 
                 class="form-control" 
@@ -828,9 +868,8 @@ function generateRandomString(length) {
               >
             </div>
 
-
             <div class="mt-5">
-              <h7 class="text-muted">Subject</h7>
+              <h5 class="text-muted">Subject</h5>
               <input
                 type="text" 
                 class="form-control" 
@@ -844,7 +883,7 @@ function generateRandomString(length) {
 
 
             <div class="mt-5">
-              <h7 class="text-muted">Department</h7>
+              <h5 class="text-muted">Department</h5>
               <select
                 type="text" 
                 class="form-select" 
@@ -898,14 +937,24 @@ function generateRandomString(length) {
             </button>
           </div>
 		  
-		  
           <!-- End Col -->
         </div>
+
+        <div class="row align-items-end mt-5" v-if="me.getUserLevel() > 9 && id>0 && apiData.actions.length>0">
+          <h3>Actions</h3>
+          <TicketAction v-for="action in apiData.actions" :key="action.url" :action="action" :apiToken="ticket.department.api_token" @action_complete="getApiData"></TicketAction>
+        </div>
+
+        <div class="row align-items-end mt-5" v-if="me.getUserLevel() > 9 && id>0 && apiData.info.length>0">
+          <h3>Info</h3>
+          <TicketInfo v-for="info in apiData.info" :key="info" :info="info"></TicketInfo>
+
+        </div>
+        
         <!-- End Row -->
 
       </div>
       <!-- End Page Header -->
-
 
       <TicketMessages v-if="id>0" :threads="threads" :ticket="ticket" />
 
