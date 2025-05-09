@@ -9,28 +9,27 @@ let auth = useAuth();
 let me = useMe();
 let router = useRouter();
 
-let email = computed(() => {
-  return me.getUserEmail();
-});
+let email = ref("");
+let name = ref("");
+let userType = ref("");
 
+onMounted(() => {
+  email.value = me.getUserEmail();
 
-let userType = computed(() => {
   if (me.getUserLevel() >= 100) {
-    return "Super User";
+    userType.value = "Super User";
   } else if (me.getUserLevel() >= 50) {
-    return "Admin";
+    userType.value = "Admin";
   } else if (me.getUserLevel() >= 10) {
-    return "Site Owner";
+    userType.value = "Site Owner";
   } else if (me.getUserLevel() >= 0) {
-    return "Client";
+    userType.value = "Client";
   }
+
+  name.value = me.getUserName();
+
 });
 
-
-
-let name = computed(() => {
-  return me.getUserName();
-});
 
 
 let signOut = () => {
@@ -61,8 +60,6 @@ let signOut = () => {
           router.push("/login");
         }
     });
-
-
 };
 
 </script>

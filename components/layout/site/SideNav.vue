@@ -1,7 +1,11 @@
 <script setup>
 
   let me = useMe();
+let userLevel = ref(0);
 
+onMounted(() => {
+  userLevel.value = me.getUserName();
+})
 </script>
 
 <template>
@@ -51,14 +55,14 @@
             </div>
 
 
-            <div v-if="me.getUserLevel() >= 10" class="nav-item">
+            <div v-if="userLevel >= 10" class="nav-item">
               <NuxtLink class="nav-link" to="/canned-replies" data-placement="left">
                 <i class="bi-card-text nav-icon"></i>
                 <span class="nav-link-title">Canned Replies</span>
               </NuxtLink>
             </div>
 
-            <div v-if="me.getUserLevel() >= 10" class="nav-item">
+            <div v-if="userLevel >= 10" class="nav-item">
               <NuxtLink class="nav-link" to="/departments" data-placement="left">
                 <i class="bi-card-text nav-icon"></i>
                 <span class="nav-link-title">Departments</span>
@@ -66,7 +70,7 @@
             </div>
 
 
-            <div v-if="me.getUserLevel() >= 100" class="nav-item">
+            <div v-if="userLevel >= 100" class="nav-item">
               <NuxtLink class="nav-link" to="/ml-canned-replies" data-placement="left">
                 <i class="bi-cpu nav-icon"></i>
                 <span class="nav-link-title">ML Canned Replies</span>
@@ -74,7 +78,7 @@
             </div>
 
 
-            <div v-if="me.getUserLevel() >= 100" class="nav-item">
+            <div v-if="userLevel >= 100" class="nav-item">
               <NuxtLink class="nav-link" to="/banned-emails" data-placement="left">
                 <i class="bi-envelope-slash nav-icon text-danger"></i>
                 <span class="nav-link-title">Banned Emails</span>
