@@ -4,7 +4,7 @@
 let userLevel = ref(0);
 
 onMounted(() => {
-  userLevel.value = me.getUserName();
+  userLevel.value = me.getUserLevel();
 })
 </script>
 
@@ -53,7 +53,6 @@ onMounted(() => {
                 <span class="nav-link-title">Search</span>
               </NuxtLink>
             </div>
-
 
             <div v-if="userLevel >= 10" class="nav-item">
               <NuxtLink class="nav-link" to="/canned-replies" data-placement="left">
