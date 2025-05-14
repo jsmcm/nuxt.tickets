@@ -11,7 +11,6 @@
 
   let { id } = useRoute().params;
 
-
   let auth = useAuth();
   let me = useMe();
   
@@ -47,6 +46,8 @@ if (me.getUserLevel() < 50) {
   clientName.value = me.getUserName();
 }
 
+
+let deleteAfterFetch = ref(true);
 
 let departmentEmail = ref("");
 let departmentEmailError = ref(false);
@@ -135,6 +136,7 @@ let getDepartment = (id) => {
         apiToken.value          = response.data.department.api_token;
         signature.value         = response.data.department.signature;
         userId.value            = response.data.department.user_id;
+        deleteAfterFetch.value  = response.data.department?.delete_after_fetch ?? true;
 
         var myEditor = document.querySelector('.js-quill')
         myEditor.children[0].innerHTML = signature.value;
@@ -302,7 +304,8 @@ let saveDepartment = (departmentId) => {
     apiBaseUrl.value,
     apiToken.value,
     auth.access_token,
-    config.public.apiUrl
+    config.public.apiUrl,
+    deleteAfterFetch.value
   )) {
     sweetalert({
       text:  "Saved",
@@ -528,7 +531,7 @@ let deleteDepartment = () => {
 
             <div class="mt-5">
               <div class="row">
-                <div class="col-6">
+                <div class="col-4">
                   <h7 class="text-muted">Pop Port</h7>
                   <input
                     type="number" 
@@ -540,8 +543,8 @@ let deleteDepartment = () => {
                     @keydown="popPortError = false"
                     placeholder="popPort"
                   >
-              </div>                
-              <div class="col-6">
+                </div>                
+                <div class="col-4">
                   <h7 class="text-muted">SMTP Port</h7>
                   <input
                     type="number" 
@@ -553,8 +556,21 @@ let deleteDepartment = () => {
                     @keydown="smtpPortError = false"
                     placeholder="smtpPort"
                   >
+                </div>                
+                <div class="col-4" style="padding-top:2em;">
+                  <div class="form-check form-switch ">
+                    <input
+                      type="checkbox"
+                      v-model="deleteAfterFetch"
+                      class="form-check-input"
+                      id="formSwitch1" 
+                      :class="{
+                        'error-border': deleteAfterFetchError
+                      }">
+                    <label class="form-check-label" for="formSwitch1">Delete After Fetch</label>
+                  </div>
+                </div>
               </div>
-            </div>
             </div>
 
 

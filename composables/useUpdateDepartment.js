@@ -1,9 +1,9 @@
 import axios from "axios";
 
 
-export function useUpdateDepartment(departmentId, departmentEmail, department, signature, logoUrl, mailHost ,mailUsername, mailPassword, popPort, smtpPort, apiBaseUrl, apiToken, access_token, apiUrl) {
+export function useUpdateDepartment(departmentId, departmentEmail, department, signature, logoUrl, mailHost ,mailUsername, mailPassword, popPort, smtpPort, apiBaseUrl, apiToken, access_token, apiUrl, deleteAfterFetch) {
 
-    async function doUpdate(departmentId, departmentEmail, department, signature, logoUrl, mailHost ,mailUsername, mailPassword, popPort, smtpPort, apiBaseUrl, apiToken, access_token, apiUrl) 
+    async function doUpdate(departmentId, departmentEmail, department, signature, logoUrl, mailHost ,mailUsername, mailPassword, popPort, smtpPort, apiBaseUrl, apiToken, access_token, apiUrl, deleteAfterFetch) 
     {
         // console.log("about to delete");
         let returnValue = await axios.patch(apiUrl + "/api/departments/" + departmentId, {
@@ -17,7 +17,8 @@ export function useUpdateDepartment(departmentId, departmentEmail, department, s
             popPort         : popPort,
             smtpPort        : smtpPort,
             apiBaseUrl      : apiBaseUrl,
-            apiToken        : apiToken
+            apiToken        : apiToken,
+            deleteAfterFetch: deleteAfterFetch
           },
           {
             headers: {
@@ -41,6 +42,6 @@ export function useUpdateDepartment(departmentId, departmentEmail, department, s
           return false;
     }
 
-    return doUpdate(departmentId, departmentEmail, department, signature, logoUrl, mailHost, mailUsername, mailPassword, popPort, smtpPort, apiBaseUrl, apiToken, access_token, apiUrl);
+    return doUpdate(departmentId, departmentEmail, department, signature, logoUrl, mailHost, mailUsername, mailPassword, popPort, smtpPort, apiBaseUrl, apiToken, access_token, apiUrl, deleteAfterFetch);
 
 }
